@@ -2,6 +2,21 @@ const express = require('express');
 const { User, Show } = require("../../models");
 const router = express.Router();
 
+// get all users who watched a show
+router.get("/:id/users/", async (req, res) => {
+    const show = await Show.findByPk(req.params.id);
+    const usersWhoWatch = await Show.getUsers();
+    console.log(usersWhoWatch, "TEST");
+    res.json(show.Users);
+});
+
+// get genres
+router.get('/genre', async(req, res) => {
+    const genre = req.query;
+    const shows = await Show.findAll({where: {genre : genre}});
+    res.json(shows);
+});
+
 // get all shows
 router.get("/", async(req, res) =>{
     const shows = await Show.findAll();
@@ -12,14 +27,6 @@ router.get("/", async(req, res) =>{
 router.get("/:id", async (req, res) => {
     const show = await Show.findByPk(req.params.id);
     res.json(show);
-});
-
-// get all users who watched a show
-router.get("/:id/users/", async (req, res) => {
-    const show = await Show.findByPk(req.params.id);
-    const usersWhoWatch = await Show.getUsers();
-    console.log(usersWhoWatch, "TEST");
-    res.json(show.Users);
 });
 
 // update availabe property of a show
@@ -34,10 +41,5 @@ router.delete("/:id", async(req, res) => {
     await show.destroy();
 });
 
-router.get('/genre', async(req, res) => {
-    const genre = req.query;
-    const shows = await Show.findAll({where: {genre : genre}});
-    res.json(shows);
-});
 
 module.exports = router;
